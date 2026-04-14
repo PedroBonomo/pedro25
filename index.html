@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Pedro 25 anos</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #e9f2f5;
+  text-align: center;
+  padding: 40px;
+  color: #2f5d73;
+}
+
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+  font-size: 28px;
+}
+
+input {
+  width: 80%;
+  padding: 12px;
+  margin-top: 20px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  background: #2f5d73;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.lista {
+  margin-top: 20px;
+  text-align: left;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Pedro Bonomo — 25 anos</h1>
+
+<p>
+Entre conchas, brisa e boas energias,<br>
+você está convidado para celebrar comigo meus 25 anos.<br><br>
+Confirme sua presença abaixo 🌊
+</p>
+
+<input type="text" id="nome" placeholder="Digite seu nome">
+
+<br>
+
+<button onclick="buscar()">Buscar</button>
+
+<div class="lista" id="resultado"></div>
+
+<button onclick="confirmar()">Confirmar presença</button>
+
+</div>
+
+<script>
+
+// 🔗 COLOQUE SUA API DO SHEETDB AQUI
+const API_URL = "https://sheetdb.io/api/v1/pxwqzzfavb1vw";
+
+let grupoAtual = [];
+
+async function buscar() {
+  const nome = document.getElementById("nome").value.toLowerCase();
+
+  const res = await fetch(API_URL);
+  const dados = await res.json();
+
+  const pessoa = dados.find(p => p.nome.toLowerCase().includes(nome));
+
+  if (!pessoa) {
+    document.getElementById("resultado").innerHTML = "Nome não encontrado 😢";
+    return;
+  }
+
+  const familia = pessoa.familia_id;
+
+  grupoAtual = dados.filter(p => p.familia_id === familia);
+
+  let html = "<h3>Quem vai?</h3>";
+
+  grupoAtual.forEach((p, i) => {
+    html += `
+      <label>
+        <input type="checkbox" id="p${i}">
+        ${p.nome}
+      </label><br>
+    `;
+  });
+
+  document.getElementById("resultado").innerHTML = html;
+}
+
+async function confirmar() {
+
+  let confirmados = [];
+
+  grupoAtual.forEach((p, i) => {
+    if (document.getElementById(`p${i}`).checked) {
+      confirmados.push(p.nome);
+    }
+  });
+
+  if (confirmados.length === 0) {
+    alert("Selecione pelo menos uma pessoa!");
+    return;
+  }
+
+  // Enviar para planilha
+  for (let nome of confirmados) {
+    await fetch(API_URL + "/nome/" + nome, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        data: {
+          confirmado: "sim"
+        }
+      })
+    });
+  }
+
+  alert("Presença confirmada 🎉");
+}
+
+</script>
+
+</body>
+</html>
