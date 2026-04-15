@@ -6,18 +6,29 @@
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #e9f2f5;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #336e8c; /* cor base (fundo) */
+  background-image: url('fundo.png'); /* sua imagem transparente */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   text-align: center;
   padding: 40px;
   color: #2f5d73;
 }
 
+#contador {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 .container {
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
   padding: 30px;
   border-radius: 15px;
-  max-width: 500px;
+  max-width: 700px;
   margin: auto;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
@@ -47,7 +58,28 @@ button {
 
 .lista {
   margin-top: 20px;
-  text-align: left;
+  text-align: center;
+}
+
+.item {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.item input {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.item:hover {
+  color: #1f4e63;
+  opacity: 0.7;
 }
 
 </style>
@@ -58,6 +90,8 @@ button {
 <div class="container">
 
 <h1>Pedro Bonomo — 25 anos</h1>
+
+<h2 id="contador"></h2>
 
 <p>
 Entre conchas, brisa e boas energias,<br>
@@ -77,7 +111,46 @@ Confirme sua presença abaixo 🌊
 
 </div>
 
+<br>
+
+<div class="container">
+
+<h3>Local da festa 📍</h3>
+
+<iframe
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3678.674452553259!2d-43.286794199999996!3d-22.777459699999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997b145b834baf%3A0x64ff31b4d31fdfe0!2zRXNwYcOnbyBNYW5zw6Nv!5e0!3m2!1spt-BR!2sbr!4v1776272783970!5m2!1spt-BR!2sbr"
+  width="90%"
+  height="300"
+  style="border:0; border-radius:15px;"
+  allowfullscreen=""
+  loading="lazy">
+</iframe>
+
+</div>
+
 <script>
+
+  const dataFesta = new Date("2026-05-17T18:13:00");
+
+function atualizarContador() {
+  const agora = new Date();
+  const diferenca = dataFesta - agora;
+
+  if (diferenca <= 0) {
+    document.getElementById("contador").innerHTML = "🎉 É hoje!";
+    return;
+  }
+
+  const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+  const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
+  const segundos = Math.floor((diferenca / 1000) % 60);
+
+  document.getElementById("contador").innerHTML =
+    `${dias} dias • ${horas}h ${minutos}min ${segundos}s`
+}
+
+setInterval(atualizarContador, 1000);
 
 // 🔗 COLOQUE SUA API DO SHEETDB AQUI
 const API_URL = "https://sheetdb.io/api/v1/pxwqzzfavb1vw";
@@ -101,14 +174,14 @@ async function buscar() {
 
   grupoAtual = dados.filter(p => p.familia_id === familia);
 
-  let html = "<h3>Quem vai?</h3>";
+ let html = "<h3 style='text-align:center;'>Quem vai?</h3>";
 
   grupoAtual.forEach((p, i) => {
     html += `
-      <label>
-        <input type="checkbox" id="p${i}">
-        ${p.nome}
-      </label><br>
+    <label class="item">
+      <input type="checkbox" id="p${i}">
+      ${p.nome}
+    </label>
     `;
   });
 
