@@ -1,227 +1,356 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Pedro 25 anos</title>
+  <meta charset="UTF-8">
+  <title>Pedro Bonomo 25 anos</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="PB.png">
 
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #336e8c; /* cor base (fundo) */
-  background-image: url('fundo.png'); /* sua imagem transparente */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  text-align: center;
-  padding: 40px;
-  color: #2f5d73;
-}
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #336e8c; /* cor base (fundo) */
+      background-image: url('fundo.png'); /* sua imagem transparente */
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      text-align: center;
+      padding: 40px;
+      color: #2f5d73;
+    }
 
-#contador {
-  font-size: 22px;
-  font-weight: bold;
-  margin-top: 10px;
-}
+    .titulo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
 
-.container {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 30px;
-  border-radius: 15px;
-  max-width: 700px;
-  margin: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
+    .icone {
+      width: 30px;   /* ajusta aqui */
+      height: 30px;
+    }
 
-h1 {
-  font-size: 28px;
-}
+    #contador {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
 
-input {
-  width: 80%;
-  padding: 12px;
-  margin-top: 20px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-}
+    .container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(245, 75, 7, 0.1);
+    }
 
-button {
-  margin-top: 20px;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 10px;
-  background: #2f5d73;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
+    h1 {
+      font-size: 28px;
+    }
 
-.lista {
-  margin-top: 20px;
-  text-align: center;
-}
+    input {
+      width: 80%;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 10px;
+      border: 1px solid #ffffff;
+    }
 
-.item {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin: 6px 0;
-  font-size: 16px;
-  cursor: pointer;
-}
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      background: #2f5d73;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-.item input {
-  margin-right: 10px;
-  transform: scale(1.2);
-}
+    .lista {
+      margin-top: 20px;
+      text-align: center;
+    }
 
-.item:hover {
-  color: #1f4e63;
-  opacity: 0.7;
-}
+    .item {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-</style>
+    .item input {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .item:hover {
+      color: #6c94a7;
+      opacity: 0.7;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .button button{
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #2f5d73;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .button button:hover{
+      background: #6c94a7;
+      color: white;
+    }
+
+    .upload-box {
+      display: block;
+      width: 80%;
+      margin: 20px auto;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background: white;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .upload-box:hover {
+      border-color: #2f5d73;
+      color: #2f5d73;
+    }
+
+    /* esconde o input feio */
+    .upload-box input {
+      display: none;
+    }
+
+  </style>
 </head>
 
 <body>
+  <div class="container">
 
-<div class="container">
+    <h1 class="titulo">
+      <img src="2.png" class="icone">
+      Pedro Bonomo — 25 anos
+      <img src="3.png" class="icone">
+    </h1>
 
-<h1>Pedro Bonomo — 25 anos</h1>
+    <h2 id="contador"></h2>
 
-<h2 id="contador"></h2>
+    <p>
+      Entre conchas, brisa e boas energias,<br>
+      você está convidado para celebrar comigo meus 25 anos.<br>
+    </p>
 
-<p>
-Entre conchas, brisa e boas energias,<br>
-você está convidado para celebrar comigo meus 25 anos.<br><br>
-Confirme sua presença abaixo 🌊
-</p>
+    <div class="tabs">
+      <div class="button">
+        <button onclick="mostrarAba('rsvp')">Presença</button>
+        <button onclick="mostrarAba('fotos')">Fotos</button>
+      </div>
+    </div>
 
-<input type="text" id="nome" placeholder="Digite seu nome">
+    <div id="rsvp">
+      <div class="button">
+      <h2>Confirme sua presença 🌊</h2>
+      <input type="text" id="nome" placeholder="Digite seu nome">
+      <button onclick="buscar()">Buscar</button>
 
-<br>
+      <div class="lista" id="resultado"></div>
 
-<button onclick="buscar()">Buscar</button>
+      <button onclick="confirmar()">Confirmar presença</button>
+      </div>
+    </div>
 
-<div class="lista" id="resultado"></div>
+  
 
-<button onclick="confirmar()">Confirmar presença</button>
-
-</div>
-
-<br>
-
-<div class="container">
-
-<h3>Local da festa 📍</h3>
-
-<iframe
-  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3678.674452553259!2d-43.286794199999996!3d-22.777459699999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997b145b834baf%3A0x64ff31b4d31fdfe0!2zRXNwYcOnbyBNYW5zw6Nv!5e0!3m2!1spt-BR!2sbr!4v1776272783970!5m2!1spt-BR!2sbr"
-  width="90%"
-  height="300"
-  style="border:0; border-radius:15px;"
-  allowfullscreen=""
-  loading="lazy">
-</iframe>
-
-</div>
-
-<script>
-
-  const dataFesta = new Date("2026-05-17T18:13:00");
-
-function atualizarContador() {
-  const agora = new Date();
-  const diferenca = dataFesta - agora;
-
-  if (diferenca <= 0) {
-    document.getElementById("contador").innerHTML = "🎉 É hoje!";
-    return;
-  }
-
-  const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
-  const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
-  const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
-  const segundos = Math.floor((diferenca / 1000) % 60);
-
-  document.getElementById("contador").innerHTML =
-    `${dias} dias • ${horas}h ${minutos}min ${segundos}s`
-}
-
-setInterval(atualizarContador, 1000);
-
-// 🔗 COLOQUE SUA API DO SHEETDB AQUI
-const API_URL = "https://sheetdb.io/api/v1/pxwqzzfavb1vw";
-
-let grupoAtual = [];
-
-async function buscar() {
-  const nome = document.getElementById("nome").value.toLowerCase();
-
-  const res = await fetch(API_URL);
-  const dados = await res.json();
-
-  const pessoa = dados.find(p => p.nome.toLowerCase().includes(nome));
-
-  if (!pessoa) {
-    document.getElementById("resultado").innerHTML = "Nome não encontrado 😢";
-    return;
-  }
-
-  const familia = pessoa.familia_id;
-
-  grupoAtual = dados.filter(p => p.familia_id === familia);
-
- let html = "<h3 style='text-align:center;'>Quem vai?</h3>";
-
-  grupoAtual.forEach((p, i) => {
-    html += `
-    <label class="item">
-      <input type="checkbox" id="p${i}">
-      ${p.nome}
+    <div id="fotos" style="display:none;">
+      <h2>Envie suas fotos 📸</h2>
+      
+    <label class="upload-box">
+      <span id="textoUpload">Escolher fotos 📸</span>
+      <input type="file" id="fotoInput" multiple>
     </label>
-    `;
-  });
 
-  document.getElementById("resultado").innerHTML = html;
+      <div class="button">
+        <button onclick="enviarFoto()">Enviar foto</button>
+      </div>
+
+      <p id="statusFoto"></p>
+
+    </div>
+  
+  </div>
+
+  <br>
+
+  <div class="container">
+
+    <h3>Local da festa 📍</h3>
+
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3678.674452553259!2d-43.286794199999996!3d-22.777459699999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997b145b834baf%3A0x64ff31b4d31fdfe0!2zRXNwYcOnbyBNYW5zw6Nv!5e0!3m2!1spt-BR!2sbr!4v1776272783970!5m2!1spt-BR!2sbr"
+      width="90%"
+      height="300"
+      style="border:0; border-radius:15px;"
+      allowfullscreen=""
+      loading="lazy">
+    </iframe>
+
+  </div>
+
+  <script>
+
+      const dataFesta = new Date("2026-05-17T13:00:00");
+
+    function atualizarContador() {
+      const agora = new Date();
+      const diferenca = dataFesta - agora;
+
+      if (diferenca <= 0) {
+        document.getElementById("contador").innerHTML = "🎉 É hoje!";
+        return;
+      }
+
+      const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
+      const segundos = Math.floor((diferenca / 1000) % 60);
+
+      document.getElementById("contador").innerHTML =
+        `${dias} dias • ${horas}h ${minutos}min ${segundos}s`
+    }
+
+    setInterval(atualizarContador, 1000);
+
+    // 🔗 COLOQUE SUA API DO SHEETDB AQUI
+    const API_URL = "https://sheetdb.io/api/v1/pxwqzzfavb1vw";
+
+    let grupoAtual = [];
+
+    async function buscar() {
+      const nome = document.getElementById("nome").value.toLowerCase();
+
+      const res = await fetch(API_URL);
+      const dados = await res.json();
+
+      const pessoa = dados.find(p => p.nome.toLowerCase().includes(nome));
+
+      if (!pessoa) {
+        document.getElementById("resultado").innerHTML = "Nome não encontrado 😢";
+        return;
+      }
+
+      const familia = pessoa.familia_id;
+
+      grupoAtual = dados.filter(p => p.familia_id === familia);
+
+    let html = "<h3 style='text-align:center;'>Quem vai?</h3>";
+
+      grupoAtual.forEach((p, i) => {
+        html += `
+        <label class="item">
+          <input type="checkbox" id="p${i}">
+          ${p.nome}
+        </label>
+        `;
+      });
+
+      document.getElementById("resultado").innerHTML = html;
+    }
+
+    async function confirmar() {
+
+      let confirmados = [];
+
+      grupoAtual.forEach((p, i) => {
+        if (document.getElementById(`p${i}`).checked) {
+          confirmados.push(p.nome);
+        }
+      });
+
+      if (confirmados.length === 0) {
+        alert("Selecione pelo menos uma pessoa!");
+        return;
+      }
+
+      // Enviar para planilha
+      for (let nome of confirmados) {
+        await fetch(API_URL + "/nome/" + nome, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            data: {
+              confirmado: "sim"
+            }
+          })
+        });
+      }
+
+      alert("Presença confirmada 🎉");
+    }
+
+    function mostrarAba(aba) {
+  document.getElementById("rsvp").style.display = "none";
+  document.getElementById("fotos").style.display = "none";
+
+  document.getElementById(aba).style.display = "block";
 }
 
-async function confirmar() {
+async function enviarFoto() {
 
-  let confirmados = [];
+  const files = document.getElementById("fotoInput").files;
 
-  grupoAtual.forEach((p, i) => {
-    if (document.getElementById(`p${i}`).checked) {
-      confirmados.push(p.nome);
-    }
-  });
-
-  if (confirmados.length === 0) {
-    alert("Selecione pelo menos uma pessoa!");
+  if (files.length === 0) {
+    alert("Escolha pelo menos uma foto!");
     return;
   }
 
-  // Enviar para planilha
-  for (let nome of confirmados) {
-    await fetch(API_URL + "/nome/" + nome, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        data: {
-          confirmado: "sim"
-        }
-      })
+  document.getElementById("statusFoto").innerText = "Enviando...";
+
+  for (let file of files) {
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "fotos_25_anos");
+
+    await fetch("https://api.cloudinary.com/v1_1/dcipfykel/image/upload", {
+      method: "POST",
+      body: formData
     });
+
   }
 
-  alert("Presença confirmada 🎉");
+  document.getElementById("statusFoto").innerHTML =
+    "Fotos enviadas com sucesso 🎉";
 }
 
-</script>
+document.getElementById("fotoInput").addEventListener("change", function() {
+  const qtd = this.files.length;
+  document.getElementById("textoUpload").innerText =
+    qtd > 1 ? `${qtd} fotos selecionadas` : this.files[0].name;
+});
+
+document.getElementById("fotoInput").value = "";
+document.getElementById("textoUpload").innerText = "Escolher fotos 📸";
+
+  </script>
 
 </body>
 </html>
