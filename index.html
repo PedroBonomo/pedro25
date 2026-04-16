@@ -277,35 +277,38 @@
       document.getElementById("resultado").innerHTML = html;
     }
 
-    async function confirmar() {
+async function confirmar() {
 
-      let confirmados = [];
+  let atualizacoes = [];
 
-      grupoAtual.forEach((p, i) => {
-        if (document.getElementById(`p${i}`).checked) {
-          confirmados.push(p.nome);
+  grupoAtual.forEach((p, i) => {
+
+    const marcado = document.getElementById(`p${i}`).checked;
+
+    atualizacoes.push({
+      nome: p.nome,
+      confirmado: marcado ? "sim" : "nao"
+    });
+
+  });
+
+  // envia tudo
+  for (let pessoa of atualizacoes) {
+    await fetch(API_URL + "/nome/" + pessoa.nome, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        data: {
+          confirmado: pessoa.confirmado
         }
-      });
+      })
+    });
+  }
 
-      if (confirmados.length === 0) {
-        alert("Selecione pelo menos uma pessoa!");
-        return;
-      }
-
-      // Enviar para planilha
-      for (let nome of confirmados) {
-        await fetch(API_URL + "/nome/" + nome, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            data: {
-              confirmado: "sim"
-            }
-          })
-        });
-      }
+  alert("Resposta enviada 🎉");
+}
 
       alert("Presença confirmada 🎉");
     }
