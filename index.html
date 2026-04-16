@@ -40,8 +40,8 @@
     .container {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(8px);
-      padding: 30px;
       border-radius: 15px;
+      padding: 30px;
       max-width: 700px;
       margin: auto;
       box-shadow: 0 10px 30px rgba(245, 75, 7, 0.1);
@@ -84,6 +84,29 @@
       margin: 6px 0;
       font-size: 16px;
       cursor: pointer;
+    }
+
+    .item {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 10px;
+      width: 90%;
+      margin: 8px auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .item.confirmado {
+      background: #e6f7ec;
+      border: 1px solid #4CAF50;
+    }
+
+    .item.confirmado span::after {
+      content: " ✓";
+      color: #4CAF50;
+      font-weight: bold;
     }
 
     .item input {
@@ -147,9 +170,7 @@
 
     <h1 class="titulo">
       <img src="2.png" class="icone">
-      Pedro Bonomo
-      <br>
-      25 anos
+      Pedro Bonomo — 25 anos
       <img src="3.png" class="icone">
     </h1>
 
@@ -160,12 +181,12 @@
       você está convidado para celebrar comigo meus 25 anos.<br>
     </p>
 
-    <!--<div class="tabs">
+    <div class="tabs">
       <div class="button">
         <button onclick="mostrarAba('rsvp')">Presença</button>
-        <button onclick="mostrarAba('fotos')">Fotos</button> 
+        <button onclick="mostrarAba('fotos')">Fotos</button>
       </div>
-    </div> -->
+    </div>
 
     <div id="rsvp">
       <div class="button">
@@ -213,147 +234,179 @@
       allowfullscreen=""
       loading="lazy">
     </iframe>
-    <h3>📍Rua Treze de Maio, 401 - Vila São Luis, Duque de Caxias - RJ, 25065-190</h3>
 
   </div>
 
   <script>
 
-      const dataFesta = new Date("2026-05-17T13:00:00");
+          const dataFesta = new Date("2026-05-17T13:00:00");
 
-    function atualizarContador() {
-      const agora = new Date();
-      const diferenca = dataFesta - agora;
+          function atualizarContador() {
+          const agora = new Date();
+          const diferenca = dataFesta - agora;
 
-      if (diferenca <= 0) {
-        document.getElementById("contador").innerHTML = "🎉 É hoje!";
-        return;
-      }
+          if (diferenca <= 0) {
+            document.getElementById("contador").innerHTML = "🎉 É hoje!";
+            return;
+          }
 
-      const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
-      const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
-      const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
-      const segundos = Math.floor((diferenca / 1000) % 60);
+          const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+          const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+          const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
+          const segundos = Math.floor((diferenca / 1000) % 60);
 
-      document.getElementById("contador").innerHTML =
-        `${dias} dias • ${horas}h ${minutos}min ${segundos}s`
+          document.getElementById("contador").innerHTML =
+            `${dias} dias • ${horas}h ${minutos}min ${segundos}s`
+        }
+
+        setInterval(atualizarContador, 1000);
+
+        // 🔗 COLOQUE SUA API DO SHEETDB AQUI
+        const API_URL = "https://sheetdb.io/api/v1/pxwqzzfavb1vw";
+
+        let grupoAtual = [];
+
+      async function buscar() {
+  const nome = document.getElementById("nome").value.toLowerCase();
+
+  const res = await fetch(API_URL);
+  const dados = await res.json();
+
+  const pessoa = dados.find(p =>
+    p.nome.toLowerCase().includes(nome.trim())
+  );
+
+  if (!pessoa) {
+    document.getElementById("resultado").innerHTML = "Nome não encontrado 😢";
+    return;
+  }
+
+  const familia = pessoa.familia_id;
+
+  grupoAtual = dados.filter(p => p.familia_id === familia);
+
+  let html = "<h3 style='text-align:center;'>Quem vai?</h3>";
+
+  // 🔁 monta lista
+  grupoAtual.forEach((p, i) => {
+
+    const checked = p.confirmado === "sim" ? "checked" : "";
+    const classe = p.confirmado === "sim" ? "confirmado" : "";
+
+    html += `
+      <label class="item ${classe}">
+        <input type="checkbox" id="p${i}" ${checked}>
+        <span>${p.nome}</span>
+      </label>
+    `;
+  });
+
+  // ✅ FORA do forEach
+  let confirmados = grupoAtual
+    .filter(p => p.confirmado === "sim")
+    .map(p => p.nome);
+
+  if (confirmados.length > 0) {
+    html += `
+      <p style="margin-top:15px; font-size:14px; color:#4CAF50;">
+        Você já confirmou presença 👍 (pode alterar se quiser)
+      </p>
+    `;
+  }
+
+  // ✅ renderiza uma vez só
+  document.getElementById("resultado").innerHTML = html;
+}
+
+    let confirmados = grupoAtual
+      .filter(p => p.confirmado === "sim")
+      .map(p => p.nome);
+
+    if (confirmados.length > 0) {
+      html += `
+        <p style="margin-top:15px; font-size:14px;">
+          ✅ Confirmados: ${confirmados.join(", ")}
+        </p>
+      `;
     }
-
-    setInterval(atualizarContador, 1000);
-
-    // 🔗 COLOQUE SUA API DO SHEETDB AQUI
-    const API_URL = "https://sheetdb.io/api/v1/pxwqzzfavb1vw";
-
-    let grupoAtual = [];
-
-    async function buscar() {
-      const nome = document.getElementById("nome").value.toLowerCase();
-
-      const res = await fetch(API_URL);
-      const dados = await res.json();
-
-      const pessoa = dados.find(p => p.nome.toLowerCase().includes(nome));
-
-      if (!pessoa) {
-        document.getElementById("resultado").innerHTML = "Nome não encontrado 😢";
-        return;
-      }
-
-      const familia = pessoa.familia_id;
-
-      grupoAtual = dados.filter(p => p.familia_id === familia);
-
-    let html = "<h3 style='text-align:center;'>Quem vai?</h3>";
-
-      grupoAtual.forEach((p, i) => {
-        html += `
-        <label class="item">
-          <input type="checkbox" id="p${i}">
-          ${p.nome}
-        </label>
-        `;
-      });
 
       document.getElementById("resultado").innerHTML = html;
-    }
+    
+    async function confirmar() {
 
-async function confirmar() {
-
-      let confirmados = [];
+      let atualizacoes = [];
 
       grupoAtual.forEach((p, i) => {
-        if (document.getElementById(`p${i}`).checked) {
-          confirmados.push(p.nome);
-        }
+
+        const marcado = document.getElementById(`p${i}`).checked;
+
+        atualizacoes.push({
+          nome: p.nome,
+          confirmado: marcado ? "sim" : "nao"
+        });
+
       });
 
-      if (confirmados.length === 0) {
-        alert("Selecione pelo menos uma pessoa!");
-        return;
-      }
-
-      // Enviar para planilha
-      for (let nome of confirmados) {
-        await fetch(API_URL + "/nome/" + nome, {
+      // envia tudo
+      for (let pessoa of atualizacoes) {
+        await fetch(API_URL + "/nome/" + encodeURIComponent(pessoa.nome), {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
             data: {
-              confirmado: "sim"
+              confirmado: pessoa.confirmado
             }
           })
         });
       }
 
-      alert("Presença confirmada 🎉");
+      alert("Resposta enviada 🎉");
     }
 
+        function mostrarAba(aba) {
+      document.getElementById("rsvp").style.display = "none";
+      document.getElementById("fotos").style.display = "none";
 
-    function mostrarAba(aba) {
-  document.getElementById("rsvp").style.display = "none";
-  document.getElementById("fotos").style.display = "none";
+      document.getElementById(aba).style.display = "block";
+    }
 
-  document.getElementById(aba).style.display = "block";
-}
+    async function enviarFoto() {
 
-async function enviarFoto() {
+      const files = document.getElementById("fotoInput").files;
 
-  const files = document.getElementById("fotoInput").files;
+      if (files.length === 0) {
+        alert("Escolha pelo menos uma foto!");
+        return;
+      }
 
-  if (files.length === 0) {
-    alert("Escolha pelo menos uma foto!");
-    return;
-  }
+      document.getElementById("statusFoto").innerText = "Enviando...";
 
-  document.getElementById("statusFoto").innerText = "Enviando...";
+      for (let file of files) {
 
-  for (let file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "fotos_25_anos");
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "fotos_25_anos");
+        await fetch("https://api.cloudinary.com/v1_1/dcipfykel/image/upload", {
+          method: "POST",
+          body: formData
+        });
 
-    await fetch("https://api.cloudinary.com/v1_1/dcipfykel/image/upload", {
-      method: "POST",
-      body: formData
+      }
+
+      document.getElementById("statusFoto").innerHTML =
+        "Fotos enviadas com sucesso 🎉";
+        document.getElementById("fotoInput").value = "";
+    document.getElementById("textoUpload").innerText = "Escolher fotos 📸";
+    }
+
+    document.getElementById("fotoInput").addEventListener("change", function() {
+      const qtd = this.files.length;
+      document.getElementById("textoUpload").innerText =
+        qtd > 1 ? `${qtd} fotos selecionadas` : this.files[0].name;
     });
-
-  }
-
-  document.getElementById("statusFoto").innerHTML =
-    "Fotos enviadas com sucesso 🎉";
-}
-
-document.getElementById("fotoInput").addEventListener("change", function() {
-  const qtd = this.files.length;
-  document.getElementById("textoUpload").innerText =
-    qtd > 1 ? `${qtd} fotos selecionadas` : this.files[0].name;
-});
-
-document.getElementById("fotoInput").value = "";
-document.getElementById("textoUpload").innerText = "Escolher fotos 📸";
 
   </script>
 
