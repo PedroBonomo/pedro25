@@ -304,33 +304,21 @@
   });
 
   // ✅ FORA do forEach
-  let confirmados = grupoAtual
-    .filter(p => p.confirmado === "sim")
-    .map(p => p.nome);
+let confirmados = grupoAtual
+  .filter(p => p.confirmado === "sim")
+  .map(p => p.nome);
 
-  if (confirmados.length > 0) {
-    html += `
-      <p style="margin-top:15px; font-size:14px; color:#4CAF50;">
-        Você já confirmou presença 👍 (pode alterar se quiser)
-      </p>
-    `;
-  }
-
-  // ✅ renderiza uma vez só
-  document.getElementById("resultado").innerHTML = html;
+if (confirmados.length > 0) {
+  html += `
+    <p style="margin-top:15px; font-size:14px;">
+      ✅ Confirmados: ${confirmados.join(", ")}
+    </p>
+  `;
 }
 
-    let confirmados = grupoAtual
-      .filter(p => p.confirmado === "sim")
-      .map(p => p.nome);
+document.getElementById("resultado").innerHTML = html;
+}
 
-    if (confirmados.length > 0) {
-      html += `
-        <p style="margin-top:15px; font-size:14px;">
-          ✅ Confirmados: ${confirmados.join(", ")}
-        </p>
-      `;
-    }
 
       document.getElementById("resultado").innerHTML = html;
     
