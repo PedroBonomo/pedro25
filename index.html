@@ -322,38 +322,39 @@ document.getElementById("resultado").innerHTML = html;
 
       document.getElementById("resultado").innerHTML = html;
     
-    async function confirmar() {
+async function confirmar() {
+  let atualizacoes = [];
+  let alguemSelecionado = false;
 
-      let atualizacoes = [];
+  grupoAtual.forEach((p, i) => {
+    const marcado = document.getElementById(`p${i}`).checked;
+    if (marcado) alguemSelecionado = true; // Verifica se houve ao menos um check
 
-      grupoAtual.forEach((p, i) => {
+    atualizacoes.push({
+      nome: p.nome,
+      confirmado: marcado ? "sim" : "nao"
+    });
+  });
 
-        const marcado = document.getElementById(`p${i}`).checked;
+  // MENSAGEM DE ALERTA CASO NINGUÉM ESTEJA MARCADO
+  if (!alguemSelecionado) {
+    alert("⚠️ Por favor, busque seu nome e marque quem vai comparecer antes de confirmar!");
+    return;
+  }
 
-        atualizacoes.push({
-          nome: p.nome,
-          confirmado: marcado ? "sim" : "nao"
-        });
+  // Se houver marcação, prossegue com o envio original
+  document.getElementById("resultado").innerHTML = "Enviando confirmação... 🌊";
 
-      });
+  for (let pessoa of atualizacoes) {
+    await fetch(API_URL + "/nome/" + encodeURIComponent(pessoa.nome), {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: { confirmado: pessoa.confirmado } })
+    });
+  }
 
-      // envia tudo
-      for (let pessoa of atualizacoes) {
-        await fetch(API_URL + "/nome/" + encodeURIComponent(pessoa.nome), {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            data: {
-              confirmado: pessoa.confirmado
-            }
-          })
-        });
-      }
-
-      alert("Resposta enviada 🎉");
-    }
+  alert("Resposta enviada 🎉");
+}
 
         function mostrarAba(aba) {
       document.getElementById("rsvp").style.display = "none";
