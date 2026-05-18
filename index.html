@@ -7,71 +7,234 @@
   <style>
     body { font-family: 'Segoe UI', sans-serif; background-color: #336e8c; text-align: center; padding: 20px; color: #2f5d73; }
     .container { background: rgba(255, 255, 255, 0.85); border-radius: 15px; padding: 30px; max-width: 700px; margin: 20px auto; }
-    button { margin-top: 20px; padding: 12px 25px; border: none; border-radius: 10px; background: #2f5d73; color: white; cursor: pointer; font-weight: bold; }
-    .upload-box { display: block; width: 80%; margin: 20px auto; padding: 12px; border-radius: 10px; border: 1px solid #ccc; background: white; cursor: pointer; }
+    button { margin-top: 20px; padding: 12px 25px; border: none; border-radius: 10px; background: #2f5d73; color: white; cursor: pointer; font-weight: bold; font-size: 15px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .upload-box { display: block; width: 80%; margin: 20px auto; padding: 12px; border-radius: 10px; border: 2px dashed #2f5d73; background: white; cursor: pointer; transition: background 0.2s; }
+    .upload-box:hover { background: #eaf4fb; }
     .upload-box input { display: none; }
+
+    /* Grid de pré-visualização */
+    #preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    .preview-item {
+      position: relative;
+      width: 90px;
+      height: 90px;
+    }
+    .preview-item img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #2f5d73;
+    }
+    .preview-item .remove-btn {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #cc3333;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 20px;
+      padding: 0;
+      margin: 0;
+    }
+    .preview-item .status-icon {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      font-size: 16px;
+    }
+
+    /* Barra de progresso */
+    #progress-bar-wrapper {
+      display: none;
+      margin: 15px auto;
+      width: 80%;
+      background: #cde8f5;
+      border-radius: 10px;
+      height: 14px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #2f5d73;
+      transition: width 0.3s;
+      border-radius: 10px;
+    }
+
+    #statusFoto { margin-top: 10px; font-weight: bold; min-height: 24px; }
+    #foto-count { font-size: 13px; color: #555; margin-top: 5px; }
   </style>
 </head>
-
 <body>
   <div class="container">
-    <h1>Pedro Bonomo - 25 anos</h1>
+    <h1>Pedro Bonomo - 25 anos 🎉</h1>
     <p>Obrigado por compartilhar esse momento comigo!</p>
-
     <div id="fotos">
-      <h2>Envie sua foto 📸</h2>
+      <h2>Envie suas fotos 📸</h2>
+
       <label class="upload-box">
-        <span id="textoUpload">Escolher foto 📸</span>
-        <input type="file" id="fotoInput" accept="image/*">
+        <span id="textoUpload">Escolher fotos 📸</span>
+        <input type="file" id="fotoInput" accept="image/*" multiple>
       </label>
-      <button onclick="enviarFoto()">Enviar para o Drive</button>
+      <div id="foto-count"></div>
+
+      <!-- Grid de pré-visualização -->
+      <div id="preview-grid"></div>
+
+      <!-- Barra de progresso -->
+      <div id="progress-bar-wrapper">
+        <div id="progress-bar"></div>
+      </div>
+
+      <button id="btnEnviar" onclick="enviarFotos()">Enviar para o Drive</button>
       <p id="statusFoto"></p>
     </div>
   </div>
 
   <script>
-    async function enviarFoto() {
-      const fileInput = document.getElementById("fotoInput");
-      const file = fileInput.files[0];
-      const status = document.getElementById("statusFoto");
+    // Armazena os arquivos selecionados (permite acumular seleções)
+    let arquivosSelecionados = [];
 
-      if (!file) { alert("Escolha uma foto primeiro!"); return; }
+    const input = document.getElementById("fotoInput");
+    const grid = document.getElementById("preview-grid");
+    const contadorEl = document.getElementById("foto-count");
 
-      status.innerText = "Enviando para o Drive... aguarde.";
+    input.addEventListener("change", function () {
+      const novos = Array.from(this.files);
+      novos.forEach(file => {
+        // Evita duplicatas pelo nome+tamanho
+        const jaExiste = arquivosSelecionados.some(
+          f => f.name === file.name && f.size === file.size
+        );
+        if (!jaExiste) arquivosSelecionados.push(file);
+      });
+      this.value = ""; // limpa o input para permitir re-seleção
+      renderizarPreview();
+      atualizarContador();
+    });
 
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      
-      reader.onload = async function() {
-        const base64Data = reader.result.split(",")[1];
-        
-        try {
-          const response = await fetch("https://script.google.com/macros/s/AKfycbweHAExxA_n99ORjOqe1srZ3tZQahrvenq1mfrOib_XFgrSR7mkJ3TsR-k__oC4-z-r/exec", {
-            method: "POST",
-            body: JSON.stringify({
-              data: base64Data,
-              mimetype: file.type,
-              filename: file.name
-            })
-          });
-
-          if (response.ok) {
-            status.innerText = "Foto enviada com sucesso! 🎉";
-            fileInput.value = "";
-            document.getElementById("textoUpload").innerText = "Escolher foto 📸";
-          } else {
-            status.innerText = "Erro ao enviar. Verifique o Script.";
-          }
-        } catch (error) {
-          status.innerText = "Erro na conexão. Verifique se o script foi implantado como 'Qualquer pessoa'.";
-          console.error(error);
-        }
-      };
+    function renderizarPreview() {
+      grid.innerHTML = "";
+      arquivosSelecionados.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const item = document.createElement("div");
+          item.className = "preview-item";
+          item.id = `preview-${index}`;
+          item.innerHTML = `
+            <img src="${e.target.result}" alt="${file.name}">
+            <button class="remove-btn" onclick="removerFoto(${index})">✕</button>
+            <span class="status-icon" id="icon-${index}"></span>
+          `;
+          grid.appendChild(item);
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
-    document.getElementById("fotoInput").addEventListener("change", function() {
-      document.getElementById("textoUpload").innerText = this.files[0] ? this.files[0].name : "Escolher foto 📸";
-    });
+    function removerFoto(index) {
+      arquivosSelecionados.splice(index, 1);
+      renderizarPreview();
+      atualizarContador();
+    }
+
+    function atualizarContador() {
+      const n = arquivosSelecionados.length;
+      contadorEl.innerText = n > 0 ? `${n} foto${n > 1 ? "s" : ""} selecionada${n > 1 ? "s" : ""}` : "";
+      document.getElementById("textoUpload").innerText = n > 0 ? "Adicionar mais fotos 📸" : "Escolher fotos 📸";
+    }
+
+    async function enviarFotos() {
+      if (arquivosSelecionados.length === 0) {
+        alert("Escolha pelo menos uma foto!");
+        return;
+      }
+
+      const status = document.getElementById("statusFoto");
+      const btn = document.getElementById("btnEnviar");
+      const progressWrapper = document.getElementById("progress-bar-wrapper");
+      const progressBar = document.getElementById("progress-bar");
+
+      btn.disabled = true;
+      progressWrapper.style.display = "block";
+      progressBar.style.width = "0%";
+      status.innerText = "Enviando fotos... aguarde.";
+
+      let enviadas = 0;
+      let erros = 0;
+      const total = arquivosSelecionados.length;
+
+      for (let i = 0; i < total; i++) {
+        const file = arquivosSelecionados[i];
+        const iconEl = document.getElementById(`icon-${i}`);
+
+        try {
+          const base64Data = await lerComoBase64(file);
+
+          const response = await fetch(
+            "https://script.google.com/macros/s/AKfycbweHAExxA_n99ORjOqe1srZ3tZQahrvenq1mfrOib_XFgrSR7mkJ3TsR-k__oC4-z-r/exec",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                data: base64Data,
+                mimetype: file.type,
+                filename: file.name
+              })
+            }
+          );
+
+          if (response.ok) {
+            enviadas++;
+            if (iconEl) iconEl.innerText = "✅";
+          } else {
+            erros++;
+            if (iconEl) iconEl.innerText = "❌";
+          }
+        } catch (error) {
+          erros++;
+          if (iconEl) iconEl.innerText = "❌";
+          console.error(`Erro ao enviar ${file.name}:`, error);
+        }
+
+        // Atualiza barra de progresso
+        const pct = Math.round(((i + 1) / total) * 100);
+        progressBar.style.width = pct + "%";
+        status.innerText = `Enviando ${i + 1} de ${total}...`;
+      }
+
+      btn.disabled = false;
+
+      if (erros === 0) {
+        status.innerText = `🎉 ${enviadas} foto${enviadas > 1 ? "s" : ""} enviada${enviadas > 1 ? "s" : ""} com sucesso!`;
+        arquivosSelecionados = [];
+        atualizarContador();
+        setTimeout(() => { grid.innerHTML = ""; progressWrapper.style.display = "none"; }, 3000);
+      } else {
+        status.innerText = `✅ ${enviadas} enviada${enviadas !== 1 ? "s" : ""} | ❌ ${erros} com erro. Tente reenviar as marcadas.`;
+      }
+    }
+
+    function lerComoBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = () => reject(new Error("Falha ao ler arquivo"));
+        reader.readAsDataURL(file);
+      });
+    }
   </script>
 </body>
 </html>
