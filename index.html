@@ -93,37 +93,51 @@
       <img src="3.png" class="icone">
     </h1>
 
-    <h2 id="contador"></h2>
-
     <p>
       Entre conchas, brisa e boas energias,<br>
       obrigado por compartilhar esse momento comigo!
     </p>
 
-    <div id="fotos">
-      <h2>Envie suas fotos 📸</h2>
+<div id="fotos">
+  <h2>Envie suas fotos 📸</h2>
+  <label class="upload-box">
+    <span id="textoUpload">Escolher fotos 📸</span>
+    <input type="file" id="fotoInput" accept="image/*">
+  </label>
+  <button onclick="enviarFoto()">Enviar para o Drive</button>
+  <p id="statusFoto"></p>
+</div>
+
+<script>
+  async function enviarFoto() {
+    const fileInput = document.getElementById("fotoInput");
+    const file = fileInput.files[0];
+    if (!file) { alert("Escolha uma foto!"); return; }
+
+    document.getElementById("statusFoto").innerText = "Enviando para o Drive...";
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const rawData = e.target.result.split(",")[1];
       
-      <label class="upload-box">
-        <span id="textoUpload">Escolher fotos 📸</span>
-        <input type="file" id="fotoInput" multiple>
-      </label>
+      // Cole aqui a URL que você copiou do seu Google Apps Script
+      const URL_DO_SEU_SCRIPT = "COLE_A_URL_AQUI"; 
 
-      <button onclick="enviarFoto()">Enviar fotos</button>
-      <p id="statusFoto"></p>
-    </div>
-  </div>
+      await fetch(URL_DO_SEU_SCRIPT, {
+        method: "POST",
+        mode: "no-cors",
+        body: new URLSearchParams({
+          data: rawData,
+          mimetype: file.type,
+          filename: file.name
+        })
+      });
 
-  <div class="container">
-    <h3>Local da festa 📍</h3>
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3678.674452553259!2d-43.286794199999996!3d-22.777459699999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997b145b834baf%3A0x64ff31b4d31fdfe0!2zRXNwYcOnbyBNYW5zw6Nv!5e0!3m2!1spt-BR!2sbr!4v1776272783970!5m2!1spt-BR!2sbr"
-      width="90%"
-      height="300"
-      style="border:0; border-radius:15px;"
-      allowfullscreen=""
-      loading="lazy">
-    </iframe>
-  </div>
+      document.getElementById("statusFoto").innerText = "Foto enviada com sucesso! 🎉";
+    };
+    reader.readAsDataURL(file);
+  }
+</script>
 
   <script>
     const dataFesta = new Date("2026-05-17T13:00:00");
