@@ -109,34 +109,63 @@
 </div>
 
 <script>
+  const dataFesta = new Date("2026-05-17T13:00:00");
+
+  function atualizarContador() {
+    const agora = new Date();
+    const diferenca = dataFesta - agora;
+    if (diferenca <= 0) {
+      document.getElementById("contador").innerHTML = "🎉 A festa aconteceu!";
+      return;
+    }
+    const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
+    document.getElementById("contador").innerHTML = `${dias} dias • ${horas}h ${minutos}min para as lembranças`;
+  }
+  setInterval(atualizarContador, 1000);
+  atualizarContador();
+
   async function enviarFoto() {
     const fileInput = document.getElementById("fotoInput");
     const file = fileInput.files[0];
-    if (!file) { alert("Escolha uma foto!"); return; }
+    if (!file) { alert("Escolha uma foto primeiro!"); return; }
 
-    document.getElementById("statusFoto").innerText = "Enviando para o Drive...";
+    document.getElementById("statusFoto").innerText = "Enviando para o Drive... aguarde.";
 
     const reader = new FileReader();
-    reader.onload = async function(e) {
-      const rawData = e.target.result.split(",")[1];
-      
-      // Cole aqui a URL que você copiou do seu Google Apps Script
-      const URL_DO_SEU_SCRIPT = "COLE_A_URL_AQUI"; 
-
-      await fetch(URL_DO_SEU_SCRIPT, {
-        method: "POST",
-        mode: "no-cors",
-        body: new URLSearchParams({
-          data: rawData,
-          mimetype: file.type,
-          filename: file.name
-        })
-      });
-
-      document.getElementById("statusFoto").innerText = "Foto enviada com sucesso! 🎉";
-    };
     reader.readAsDataURL(file);
+    reader.onload = async function() {
+      const base64Data = reader.result.split(",")[1];
+      
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbyXKQEKPmSds9DAaLwY6WVaat9AysixD2rcnhE7dkFjrWiTKAG1AqPJEeFlL324L47d/exec", {
+          method: "POST",
+          body: JSON.stringify({
+            data: base64Data,
+            mimetype: file.type,
+            filename: file.name
+          })
+        });
+
+        if (response.ok) {
+          document.getElementById("statusFoto").innerText = "Foto enviada com sucesso! 🎉";
+          fileInput.value = "";
+          document.getElementById("textoUpload").innerText = "Escolher fotos 📸";
+        } else {
+          document.getElementById("statusFoto").innerText = "Erro ao enviar. Tente novamente.";
+        }
+      } catch (error) {
+        document.getElementById("statusFoto").innerText = "Erro na conexão.";
+        console.error(error);
+      }
+    };
   }
+
+  document.getElementById("fotoInput").addEventListener("change", function() {
+    const nomeArquivo = this.files.length > 0 ? this.files[0].name : "Escolher fotos 📸";
+    document.getElementById("textoUpload").innerText = nomeArquivo;
+  });
 </script>
 
   <script>
